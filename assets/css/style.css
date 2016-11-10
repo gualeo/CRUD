@@ -1,0 +1,113 @@
+#fileAddDiv {
+    bottom: 10px;
+    left: 10;
+    position: absolute;
+    z-index: 1;
+    margin: 10px;
+	display:none;
+}
+#fileWatchDiv {
+    top: 10px;
+    right: 10px;
+    position: absolute;
+    z-index: 1;
+    margin: 10px;
+}
+#map {
+    min-width: 500px;
+    width: 100%;
+    min-height: 500px;
+    height: 100%;
+}
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
+}
+#fileinput {
+    display: none;
+}
+.pie {
+    background-color:#3198B7;
+    width:70px;
+    height:70px;
+    -moz-border-radius:35px;
+    -webkit-border-radius:35px;
+    border-radius:35px;
+    position:relative;
+}
+.clip1 {
+    position:absolute;
+    top:0;
+    left:0;
+    width:70px;
+    height:70px;
+    clip:rect(0px, 70px, 70px, 35px);
+}
+.slice1 {
+    position:absolute;
+    width:70px;
+    height:70px;
+    clip:rect(0px, 35px, 70px, 0px);
+    -moz-border-radius:35px;
+    -webkit-border-radius:35px;
+    border-radius:35px;
+    background-color:#5BC0DE;
+    border-color:#5BC0DE;
+    -moz-transform:rotate(0);
+    -webkit-transform:rotate(0);
+    -o-transform:rotate(0);
+    transform:rotate(0);
+}
+.clip2 {
+    position:absolute;
+    top:0;
+    left:0;
+    width:70px;
+    height:70px;
+    clip:rect(0, 35px, 70px, 0px);
+}
+.slice2 {
+    position:absolute;
+    width:70px;
+    height:70px;
+    clip:rect(0px, 70px, 70px, 35px);
+    -moz-border-radius:35px;
+    -webkit-border-radius:35px;
+    border-radius:35px;
+    background-color:#5BC0DE;
+    border-color:#5BC0DE;
+    -moz-transform:rotate(0);
+    -webkit-transform:rotate(0);
+    -o-transform:rotate(0);
+    transform:rotate(0);
+}
+.status {
+    position:absolute;
+    height:30px;
+    width:200px;
+    line-height:60px;
+    text-align:center;
+    top:50%;
+    margin-top:-35px;
+    font-size:60px;
+}
+.coordBox{
+   bottom: 10px;
+    left: 10px;
+    position: absolute;
+    z-index: 1;
+    margin: 10px;
+	background-color:#fff;
+}
+.copyBox{
+   top: 10px;
+    left: 10px;
+    position: absolute;
+    z-index: 1;
+    margin: 10px;
+	background-color:#fff;
+}

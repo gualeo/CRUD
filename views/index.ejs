@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <style>
+      html { height: 100% }
+      body { height: 100% }
+      #map { height: 80% }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="dashboard.css" />
+    <script src="assets/vendor/geoxml/js/geoxml3.js"></script>
+    <script src="assets/js/appredo.js"></script>
+ 
+    
+
+
+  </head>
+
+  <body>
+    
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Monitoreo de Incendios</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Perfil</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Mapa Principal <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Confidencialidad <div class="btn-group-vertical" role="group" aria-label="...">
+                                              <button type="button" class="btn btn-default" id="confidency1">0% - 40%</button>
+                                              <button type="button" class="btn btn-default" id="confidency2">40% - 70%</button>
+                                              <button type="button" class="btn btn-default" id="confidency3">>70%</button>
+                                              <button type="button" class="btn btn-default" id="confidency4">Todos</button>
+                                            </div> </a></li>
+            <li><a href="#">Zona <br/><div class="btn-group-vertical" role="group" aria-label="...">
+                                              <button type="button" class="btn btn-default" id="zone1">Zona 1</button>
+                                              <button type="button" class="btn btn-default" id="zone2">Zona 2</button>
+                                              <button type="button" class="btn btn-default" id="zone3">Zona 3</button>
+                                              <button type="button" class="btn btn-default" id="zone4">Todos</button>
+                                            </div> </a></li>
+            <li><a href="#">KML <br/><div class="btn-group-vertical" role="group" aria-label="...">
+                                              <button type="button" class="btn btn-default" id="kml1">Concepcion</button>
+                                              <button type="button" class="btn btn-default" id="kml2">Temuco</button>
+                                              <button type="button" class="btn btn-default" id="kml3">Ninguna</button>
+                                            </div> </a></li>
+        </div>
+
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Mapa de Incendios</h1>
+        
+          <div class="row placeholders">
+            <div class="col-xs-8 col-sm-4 placeholder">
+              <div id="Zona1" class="numberCircleRed ">0</div>
+              <h4>Zona 1</h4>
+              <span class="text-muted">Incendios cercanos de una linea electrica sin mantenimiento</span>
+            </div>
+            <div class="col-xs-8 col-sm-4 placeholder">
+              <div id="Zona2" class="numberCircleOrange ">0</div>
+              <h4>Zona 2</h4>
+              <span class="text-muted">Incendios cercanos de una linea electrica</span>
+            </div>
+            <div class="col-xs-8 col-sm-4 placeholder">
+              <div id="Zona3" class="numberCircleYellow ">0</div>
+              <h4>Zona 3</h4>
+              <span class="text-muted">Incendios dentro del area monitoreada</span>
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+
+
+    <div id="map" ></div> 
+
+    
+
+    <script  type="text/javascript"> 
+
+    var map;
+
+    var gmarkers1 = [];
+	var markers1 = [];
+	var moreInfo = [];
+	
+
+	<% for(var i=0; i<puntos.length; i++) {%>
+		markers1.push(['<%=i%>', 'Punto de Incendio No.<%=i%>', <%=puntos[i].latitude %>, <%=puntos[i].longitude %>, ['zona1','confidence1','region1']]);
+		moreInfo.push(['<%=puntos[i].confidence %>','<%=puntos[i].acq_date %>','<%=puntos[i].acq_time %>','<%=puntos[i].cercano %>']);
+	<%}%>
+
+
+      function initMap() {
+
+      	var infowindow = new google.maps.InfoWindow({
+		      content: ''
+		    });
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -30, lng: -71},
+          zoom: 18,
+          mapTypeId: google.maps.MapTypeId.HYBRID
+        });
+
+        map.markers = [];
+
+        var ctaLayer = new google.maps.KmlLayer({
+            url: 'https://www.dropbox.com/s/uouq3gh1uv435ov/Electric%20Zone.kml?dl=1',
+            map: map
+          });
+
+        //setFile("assets/kml/file.kml");
+        //setFile("assets/kml/FR_Temuco.kml");
+
+        var contentString;
+        var zona2 = 0;
+        var zona3 = 0;
+
+        for (i = 0; i < markers1.length; i++) {
+
+        	contentString = '<div id="content">'+
+		      '<div id="siteNotice">'+
+		      '</div>'+
+		      '<h1 id="firstHeading" class="firstHeading">'+markers1[i][1]+'</h1>'+
+		      '<div id="bodyContent">'+
+		      '<p><b>Latitud: </b>'+markers1[i][2]+'</p>'+
+		      '<p><b>Longitud: </b>'+markers1[i][3]+'</p>'+
+		      '<p><b>Confiabilidad: </b>'+moreInfo[i][0]+'%</p>'+
+		      '<p><b>Fecha: </b>'+moreInfo[i][1]+'</p>'+
+		      '<p><b>Hora: </b>'+moreInfo[i][2]+'</p>'+
+		      '</div>'+
+		      '</div>';
+
+          zona3++;
+          
+          if (moreInfo[i][3] == 1)
+          {
+            zona2++;
+          }
+
+
+        	addMarker(markers1[i], contentString, moreInfo);
+        }
+
+        document.getElementById("Zona2").innerHTML = zona2;
+        document.getElementById("Zona3").innerHTML = zona3;
+
+
+
+          /**
+  		 * Function to add marker to map
+  		 */
+
+  		function addMarker(marker, contentMarker, detail) {
+  		    var category = marker[4];
+  		    var title = marker[1];
+  		    var pos = new google.maps.LatLng(marker[2], marker[3]);
+  		    var content = contentMarker;
+          var iconFire;
+          var zoneFire = 0;
+
+          if (detail[i][3] == 1){
+            iconFire = 'assets/image/fire.png';
+            zoneFire = 2;
+          }
+          else{
+            iconFire = 'assets/image/zona3.png';
+            zoneFire = 3;
+          }
+
+  		    marker1 = new google.maps.Marker({
+  		        title: title,
+  		        position: pos,
+  		        category: category,
+  		        map: map,
+              icon: iconFire,
+              confidence: detail[i][0],
+              zone: zoneFire
+  		    });
+
+  		    map.markers.push(marker1);
+
+  		    // Marker click listener
+  		    google.maps.event.addListener(marker1, 'click', (function (marker1, content) {
+  		        return function () {
+  		            infowindow.setContent(content);
+  		            infowindow.open(map, marker1);
+  		            map.panTo(this.getPosition());
+  		            map.setZoom(15);
+  		        }
+  		    })(marker1, content));
+  		}
+
+
+      $("#confidency1").click(function() {
+          confidencyFilter(0, 40, 0);
+      });
+
+      $("#confidency2").click(function() {
+          confidencyFilter(40, 70, 0);
+      });
+
+      $("#confidency3").click(function() {
+          confidencyFilter(70, 100, 0);
+      });
+
+      $("#confidency4").click(function() {
+          confidencyFilter(0, 0, 1);
+      });
+
+      $("#zone1").click(function() {
+          zoneFilter(1);
+      });
+
+      $("#zone2").click(function() {
+          zoneFilter(2);
+      });
+
+      $("#zone3").click(function() {
+          zoneFilter(3);
+      });
+
+      $("#zone4").click(function() {
+          zoneFilter(0);
+      });
+
+      $("#kml1").click(function() {
+          setFile("assets/kml/file.kml");
+      });
+
+      $("#kml2").click(function() {
+          setFile("assets/kml/FR_Temuco.kml");
+      });
+      $("#kml3").click(function() {
+          setMapOnAll(null);
+      });
+
+
+
+      function confidencyFilter(min, max, all) {
+        $.each(map.markers, function(i, marker) {
+              if (all == 1){
+                marker.setVisible(true);
+              }
+              else{
+                if((marker.confidence >= min) && (marker.confidence < max))
+                  marker.setVisible(true);
+                else
+                    marker.setVisible(false);
+                  
+              }
+              
+          });
+      }
+
+      function zoneFilter(zone) {
+        $.each(map.markers, function(i, marker) {
+              if (zone == 0){
+                marker.setVisible(true);
+              }
+              else{
+                if(marker.zone == zone)
+                  marker.setVisible(true);
+                else
+                    marker.setVisible(false);
+                  
+              }
+              
+          });
+      }
+
+
+
+        
+     }
+    </script>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBib8YYdLwVH5RTcNMXMEd1GPtMJ8EnI4&callback=initMap">
+    </script>
+     
+  </body>
+</html>
