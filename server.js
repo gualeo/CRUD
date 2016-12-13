@@ -5,14 +5,21 @@ const app = express();
 const MongoClient = require('mongodb').MongoClient
 const csv = require('fast-csv');
 const csv2 = require('fast-csv');
-const validador = require("./ElectricArea.js")
-const detecIncendio = require("./fireCloseness.js")
+const validador = require("./ElectricArea.js");
+const detecIncendio = require("./fireCloseness.js");
+const request = require("request");
+const stormpath = require('express-stormpath');
+const engines = require('consolidate');
+
+
+
 
 
 app.use(bodyParser.urlencoded({extended: true}))
 
 //para utilizar el ejs
-app.set('view engine', 'ejs')
+app.set('views', './views');
+app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/'));
 
 
@@ -22,6 +29,18 @@ const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
   apiKey: '71f552bb',
   apiSecret: '63a9fefb1345d159'
+});
+
+app.use(stormpath.init(app, {
+  expand: {
+    customData: true
+  }
+}));
+ 
+
+ 
+app.on('stormpath.ready',function(){
+  console.log('Stormpath Ready');
 });
  
 
@@ -154,17 +173,27 @@ app.get('/lectura', function(req, res) {
 
 })
 
-//muestro el index.html en la ruta.
-app.get('/', function(req, res) {
-   res.sendFile(__dirname + '/index.html')
-})
+app.get('/', stormpath.getUser, function(req, res) {
+  res.render('home', {
+    title: 'Welcome'
+  });
+});
+
 
 //para ver los puntos.
 app.get('/mapa', (req, res) => {
   db.collection('FirePoints').find().toArray((err, result) => {
     if (err) return console.log(err)
+
+
+    request("http://api.wunderground.com/api/ac6084d23fcb0ad4/conditions/lang:SP/q/zmw:00000.1.85682.json", function(error, response, body) {
+	  console.log(body);
+	  res.render('index.ejs', {puntos: result, clima:body})
+	});
+
+
     // renders index.ejs
-    res.render('index.ejs', {puntos: result})
+    
   })
 })
 

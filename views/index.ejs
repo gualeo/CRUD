@@ -14,13 +14,13 @@
 
     <style>
       html { height: 100% }
-      body { height: 100% }
-      #map { height: 80% }
+      body { height: 100% } 
     </style>
 
     <link rel="stylesheet" type="text/css" href="dashboard.css" />
     <script src="assets/vendor/geoxml/js/geoxml3.js"></script>
     <script src="assets/js/appredo.js"></script>
+    <script src="assets/js/markerclusterer.js"></script>
  
     
 
@@ -54,56 +54,136 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Mapa Principal <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Confidencialidad <div class="btn-group-vertical" role="group" aria-label="...">
-                                              <button type="button" class="btn btn-default" id="confidency1">0% - 40%</button>
-                                              <button type="button" class="btn btn-default" id="confidency2">40% - 70%</button>
-                                              <button type="button" class="btn btn-default" id="confidency3">>70%</button>
-                                              <button type="button" class="btn btn-default" id="confidency4">Todos</button>
-                                            </div> </a></li>
-            <li><a href="#">Zona <br/><div class="btn-group-vertical" role="group" aria-label="...">
-                                              <button type="button" class="btn btn-default" id="zone1">Zona 1</button>
-                                              <button type="button" class="btn btn-default" id="zone2">Zona 2</button>
-                                              <button type="button" class="btn btn-default" id="zone3">Zona 3</button>
-                                              <button type="button" class="btn btn-default" id="zone4">Todos</button>
-                                            </div> </a></li>
-            <li><a href="#">KML <br/><div class="btn-group-vertical" role="group" aria-label="...">
-                                              <button type="button" class="btn btn-default" id="kml1">Concepcion</button>
-                                              <button type="button" class="btn btn-default" id="kml2">Temuco</button>
-                                              <button type="button" class="btn btn-default" id="kml3">Ninguna</button>
-                                            </div> </a></li>
+            <li class="active"><a href="#"> Filtro de Puntos de Incendio <span class="sr-only">(current)</span></a></li>
+            <li>
+              <h5 id="NivelRiesgo">Nivel de Riesgo: Todos</h5>
+              <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dwconfidency" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  Nivel de Riesgo
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="confidency">
+                  <li><a href="#" id="1">0% - 40%</a></li>
+                  <li><a href="#" id="2">40% - 70%</a></li>
+                  <li><a href="#" id="3">Mayor al 70%</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#" id="4">Todos</a></li>
+                </ul>
+              </div>
+
+            </li>
+            <li>
+
+              <h5 id="ZonaRiesgo">Zona de Riesgo: Todas</h5>
+                <div class="dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="dwzone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Zona de Riesgo
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="RiskZone">
+                    <li><a href="#" id="zone1">Zona 1</a></li>
+                    <li><a href="#" id="zone2">Zona 2</a></li>
+                    <li><a href="#" id="zone3">Zona 3</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#" id="zone4">Todas las Zonas</a></li>
+                  </ul>
+                </div>
+
+            </li>
+            <li>
+
+                <h5 id="ZonaElectrica">Mostrar Lineas Electricas</h5>
+                <div class="dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="dwElectriczone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Lineas ELectricas
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="ElectricZone">
+                    <li><a href="#" id="zone1">Si</a></li>
+                    <li><a href="#" id="zone2">No</a></li>
+                  </ul>
+                </div>
+
+            </li>
         </div>
 
+        <div class="col-md-offset-2 main">
+           <h1 class="page-header">Mapa de Incendios</h1>
 
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Mapa de Incendios</h1>
-        
-          <div class="row placeholders">
-            <div class="col-xs-8 col-sm-4 placeholder">
-              <div id="Zona1" class="numberCircleRed ">0</div>
-              <h4>Zona 1</h4>
-              <span class="text-muted">Incendios cercanos de una linea electrica sin mantenimiento</span>
+           <div class="row placeholders">
+
+             <div class="col-md-9">
+                <div id="map" style="width:95%;height:400px"></div>
+             </div> 
+             <div class="col-md-3">
+                <div class="row placeholders">
+                    <div class="placeholder">
+                      <div id="Zona1" class="numberCircleRed ">0</div>
+                      <h4 style="text-align: center;">Zona 1</h4>
+                      <span class="text-muted" >Incendios cercanos de una linea electrica sin mantenimiento</span>
+                    </div>        
+                </div>
+                <div class="row placeholders">
+                    <div class="placeholder">
+                      <div id="Zona2" class="numberCircleOrange ">0</div>
+                      <h4>Zona 2</h4>
+                      <span class="text-muted">Incendios cercanos de una linea electrica</span> 
+                    </div> 
+                </div>
+                <div class="row placeholders">
+                    <div class="placeholder">
+                      <div id="Zona3" class="numberCircleYellow ">0</div>
+                      <h4>Zona 3</h4>
+                      <span class="text-muted">Incendios dentro del area monitoreada</span>
+                    </div> 
+                </div>
+             </div> 
+          </div>
+        </br>
+          <div class="row">
+            <% var climaJson = JSON.parse(clima); 
+                var city = climaJson["current_observation"].display_location.full;
+                var img  = climaJson["current_observation"].icon_url;
+                var estado  = climaJson["current_observation"].weather;
+                var temp = climaJson["current_observation"].temp_c;
+                var Hum = climaJson["current_observation"].relative_humidity;
+                var Pres = climaJson["current_observation"].pressure_mb;
+
+                %>
+            
+            <h2 class="page-header">Información del Clima: <%= city %></h2>
+
+            <div class="col-md-3">
+              <h4><%=estado%></h4>
+              <img src="<%=img%>" alt="Clima" height="80" width="80">
             </div>
-            <div class="col-xs-8 col-sm-4 placeholder">
-              <div id="Zona2" class="numberCircleOrange ">0</div>
-              <h4>Zona 2</h4>
-              <span class="text-muted">Incendios cercanos de una linea electrica</span>
+            <div class="col-md-3">
+              <h4>Temperatura</h4>
+              <h1><%=temp%> C<h1>
+
             </div>
-            <div class="col-xs-8 col-sm-4 placeholder">
-              <div id="Zona3" class="numberCircleYellow ">0</div>
-              <h4>Zona 3</h4>
-              <span class="text-muted">Incendios dentro del area monitoreada</span>
+            <div class="col-md-3">
+              <h4>Humedad</h4>
+              <h1><%=Hum%><h1>
+            </div>            
+            <div class="col-md-3">
+              <h4>Presion</h4>
+              <h1><%=Pres%> hPas<h1>
             </div>
+            
+
+
+
           </div>
 
-        </div>
 
+        </div>
 
       </div>
     </div>
 
 
-    <div id="map" ></div> 
+    
 
     
 
@@ -114,10 +194,18 @@
     var gmarkers1 = [];
 	var markers1 = [];
 	var moreInfo = [];
+  var gZone1 = 0;
+  var gZone2 = 0;
+  var gZone3 = 0;
 	
 
 	<% for(var i=0; i<puntos.length; i++) {%>
-		markers1.push(['<%=i%>', 'Punto de Incendio No.<%=i%>', <%=puntos[i].latitude %>, <%=puntos[i].longitude %>, ['zona1','confidence1','region1']]);
+    <% var zona = "zona3";
+       if (puntos[i].cercano==1){
+          zona = "zona2";
+       }
+          %>
+		markers1.push(['<%=i%>', 'Punto de Incendio No.<%=i%>', <%=puntos[i].latitude %>, <%=puntos[i].longitude %>, ['<%=zona%>','<%=puntos[i].confidence %>','region1']]);
 		moreInfo.push(['<%=puntos[i].confidence %>','<%=puntos[i].acq_date %>','<%=puntos[i].acq_time %>','<%=puntos[i].cercano %>']);
 	<%}%>
 
@@ -129,17 +217,20 @@
 		    });
 
         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -30, lng: -71},
-          zoom: 18,
+          center: {lat: -37.796, lng: -72.477},
+          zoom: 6,
           mapTypeId: google.maps.MapTypeId.HYBRID
         });
 
         map.markers = [];
 
-        var ctaLayer = new google.maps.KmlLayer({
+        var markersZona2 =[];
+
+
+        /*var ctaLayer = new google.maps.KmlLayer({
             url: 'https://www.dropbox.com/s/uouq3gh1uv435ov/Electric%20Zone.kml?dl=1',
             map: map
-          });
+          });*/
 
         //setFile("assets/kml/file.kml");
         //setFile("assets/kml/FR_Temuco.kml");
@@ -148,6 +239,7 @@
         var zona2 = 0;
         var zona3 = 0;
 
+       
         for (i = 0; i < markers1.length; i++) {
 
         	contentString = '<div id="content">'+
@@ -163,11 +255,15 @@
 		      '</div>'+
 		      '</div>';
 
-          zona3++;
+          
           
           if (moreInfo[i][3] == 1)
           {
             zona2++;
+          }
+          else
+          {
+            zona3++;
           }
 
 
@@ -177,6 +273,16 @@
         document.getElementById("Zona2").innerHTML = zona2;
         document.getElementById("Zona3").innerHTML = zona3;
 
+        gZone2 = zona2;
+        gZone3 = zona3;
+
+        Circulos(markers1, map);
+
+
+        var markerCluster = new MarkerClusterer(map, markersZona2,
+            {imagePath: 'assets/image/m'});
+
+
 
 
           /**
@@ -184,15 +290,18 @@
   		 */
 
   		function addMarker(marker, contentMarker, detail) {
-  		    var category = marker[4];
+  		    //obtengo la info del marcador
+          var category = marker[4];
   		    var title = marker[1];
   		    var pos = new google.maps.LatLng(marker[2], marker[3]);
-  		    var content = contentMarker;
+  		    var content = contentMarker; //detalle del marcador que se muestra al dar click en el 
           var iconFire;
           var zoneFire = 0;
 
+
+          //le asigno un icono al marcador dependiendo de la zona
           if (detail[i][3] == 1){
-            iconFire = 'assets/image/fire.png';
+            iconFire = 'assets/image/zona2.png';
             zoneFire = 2;
           }
           else{
@@ -200,6 +309,7 @@
             zoneFire = 3;
           }
 
+          //agrego el marcador
   		    marker1 = new google.maps.Marker({
   		        title: title,
   		        position: pos,
@@ -212,7 +322,12 @@
 
   		    map.markers.push(marker1);
 
-  		    // Marker click listener
+          if (detail[i][3] == 0){
+            markersZona2.push(marker1);
+          }
+          
+
+  		    // funcion que monitorea el monmento en que se da click al marcadador para enseñar el detalle 
   		    google.maps.event.addListener(marker1, 'click', (function (marker1, content) {
   		        return function () {
   		            infowindow.setContent(content);
@@ -224,7 +339,7 @@
   		}
 
 
-      $("#confidency1").click(function() {
+      /*$("#confidency1").click(function() {
           confidencyFilter(0, 40, 0);
       });
 
@@ -238,9 +353,49 @@
 
       $("#confidency4").click(function() {
           confidencyFilter(0, 0, 1);
+      });*/
+
+      $('#confidency li a').on('click', function(){
+          var text = $(this).text();
+          var id = $(this).attr('id');
+          $("#NivelRiesgo").text("Nivel de Riesgo: " + text);
+          if (id=="1"){
+            confidencyFilter(0, 40, 0);
+          }
+          if (id=="2"){
+            confidencyFilter(40, 70, 0);
+          }
+          if (id=="3"){
+            confidencyFilter(70, 100, 0);
+          }
+          if (id=="4"){
+            confidencyFilter(0, 0, 1);
+          }
+
       });
 
-      $("#zone1").click(function() {
+      $('#RiskZone li a').on('click', function(){
+          var text = $(this).text();
+          var id = $(this).attr('id');
+          $("#ZonaRiesgo").text("Zona de Riesgo: " + text);
+          if (id=="zone1"){
+            zoneFilter(1);
+          }
+          if (id=="zone2"){
+            zoneFilter(2);
+          }
+          if (id=="zone3"){
+            zoneFilter(3);
+          }
+          if (id=="zone4"){
+            zoneFilter(0);
+          }
+
+      });
+
+      
+
+      /*$("#zone1").click(function() {
           zoneFilter(1);
       });
 
@@ -254,7 +409,7 @@
 
       $("#zone4").click(function() {
           zoneFilter(0);
-      });
+      });*/
 
       $("#kml1").click(function() {
           setFile("assets/kml/file.kml");
@@ -270,35 +425,142 @@
 
 
       function confidencyFilter(min, max, all) {
+        var zone1 = 0;
+        var zone2 = 0;
+        var zone3 = 0;
+        
+        markerCluster.clearMarkers();
+
+        var Filtermarkers =[];
+
         $.each(map.markers, function(i, marker) {
               if (all == 1){
                 marker.setVisible(true);
+                zone2 = gZone2;
+                zone3 = gZone3;
+                if (marker.zone == 3) {
+                  Filtermarkers.push(marker);
+                }
+                
               }
               else{
-                if((marker.confidence >= min) && (marker.confidence < max))
+                if((marker.confidence >= min) && (marker.confidence < max)){
                   marker.setVisible(true);
-                else
-                    marker.setVisible(false);
+                  
+                  if (marker.zone == 1)
+                  {
+                    zone1++;
+                  } 
+                  if (marker.zone == 2)
+                  {
+                    zone2++;
+                  } 
+                  if (marker.zone == 3)
+                  {
+                    zone3++;
+                    Filtermarkers.push(marker);
+                  } 
+                }
+                else{
+                  marker.setVisible(false);
+                }
                   
               }
               
           });
+
+        document.getElementById("Zona1").innerHTML = zone1;
+        document.getElementById("Zona2").innerHTML = zone2;
+        document.getElementById("Zona3").innerHTML = zone3;
+        markerCluster = new MarkerClusterer(map, Filtermarkers,
+            {imagePath: 'assets/image/m'});
+
+
       }
 
       function zoneFilter(zone) {
+        var Riskzone1 = 0;
+        var Riskzone2 = 0;
+        var Riskzone3 = 0;
+
+        markerCluster.clearMarkers();
+        var Filtermarkers =[];
+
         $.each(map.markers, function(i, marker) {
               if (zone == 0){
                 marker.setVisible(true);
+                Riskzone2 = gZone2;
+                Riskzone3 = gZone3;
+                if (marker.zone == 3) {
+                  Filtermarkers.push(marker);
+                }
               }
               else{
-                if(marker.zone == zone)
+                if(marker.zone == zone){
                   marker.setVisible(true);
-                else
+                  if (marker.zone == 1)
+                  {
+                    Riskzone1++;
+                  } 
+                  if (marker.zone == 2)
+                  {
+                    Riskzone2++;
+                  } 
+                  if (marker.zone == 3)
+                  {
+                    Riskzone3++;
+                    Filtermarkers.push(marker);
+                  } 
+                }
+                else{
                     marker.setVisible(false);
+                }
                   
               }
               
           });
+        document.getElementById("Zona1").innerHTML = Riskzone1;
+        document.getElementById("Zona2").innerHTML = Riskzone2;
+        document.getElementById("Zona3").innerHTML = Riskzone3;
+        markerCluster = new MarkerClusterer(map, Filtermarkers,
+            {imagePath: 'assets/image/m'});
+      }
+
+
+      //Función para realizar circulos alrededor de una zona. Será necesario agregar dos varibles.
+      //Puntos: Arreglo con formato usado en el proyecto incendios.
+      //Mapa: Mapa usado actualmente.
+
+      function Circulos(Puntos, Mapa)
+      {
+        var Color = undefined;
+          for (var i in Puntos) {
+            // Se define el color de los circulos de acuerdo al tipo de zona.
+            if (Puntos[i][4][0] == "zona1")
+              {
+                Color = '#FF0000';
+              }
+            else if (Puntos[i][4][0] == "zona2")
+              {
+                Color = '#F39C12';
+              }
+            else
+              {
+                Color = '#D9F312';
+              }
+
+            var PuntosCirculos =new google.maps.Circle
+              ({
+                strokeColor: Color,
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: Color,
+                fillOpacity: 0.2,
+                map: Mapa,
+                center: {lat:Puntos[i][2], lng:Puntos[i][3]},
+                radius: 375,
+              });
+          }
       }
 
 
