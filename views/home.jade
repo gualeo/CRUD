@@ -10,14 +10,15 @@ html
         if user
           p Bienvenido, #{user.fullName}
           p
-            a.small(href="profile") Edit my profile
+          .btn.btn-primary(href="/mapa") Ver Mapa
+          p
           form(action='/logout', method='POST')
-            button.btn.btn-default(type="submit") Logout
+            button.btn.btn-default(type="submit") Salir
         else
-          p Welcome to my app, ready to get started?
+          p Bienvenido
           p
             a.btn.btn-primary(href="/login") Ingresar
           p
-            span.small Don't have an account?
+            span.small Deseas conocer más
             span &nbsp;
-            a.small(href="/register") Register now
+            a.small(href="info@gualeo.com") Contactanos

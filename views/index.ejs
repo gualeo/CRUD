@@ -17,10 +17,26 @@
       body { height: 100% } 
     </style>
 
+    <style type="text/css">
+      .wrapColum {
+         width:100%;
+         margin:0 auto;
+      }
+      .left_col {
+         float:left;
+         width:50%;
+      }
+      .right_col {
+         float:right;
+         width:50%;
+      }
+    </style>
+
     <link rel="stylesheet" type="text/css" href="dashboard.css" />
     <script src="assets/vendor/geoxml/js/geoxml3.js"></script>
     <script src="assets/js/appredo.js"></script>
     <script src="assets/js/markerclusterer.js"></script>
+    <script src="assets/js/dygraph-combined-dev.js"></script>
  
     
 
@@ -43,8 +59,8 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Perfil</a></li>
+            <li><a href="#">Usuario: <%=usuario.email%></a></li>
+            <li><form action="/logout" method="POST"><button type="submit" class="btn btn-default">Salir</button></form></li>
           </ul>
         </div>
       </div>
@@ -105,6 +121,25 @@
                 </div>
 
             </li>
+            <li>
+
+              <h5 id="empresaElectricaTxt">Empresa</h5>
+                <div class="dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="dwzone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Estacion
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="empresaElectrica">
+                    <li><a href="#" id="0">CGE</a></li>
+                    <li><a href="#" id="1">Copelec</a></li>
+                    <li><a href="#" id="2">Frontel</a></li>
+                    <li><a href="#" id="3">SAESA</a></li>
+                    <li><a href="#" id="4">Transelec</a></li>
+                    <li><a href="#" id="-1">Todas</a></li>
+                  </ul>
+                </div>
+
+            </li>
         </div>
 
         <div class="col-md-offset-2 main">
@@ -140,41 +175,73 @@
              </div> 
           </div>
         </br>
-          <div class="row">
-            <% var climaJson = JSON.parse(clima); 
-                var city = climaJson["current_observation"].display_location.full;
-                var img  = climaJson["current_observation"].icon_url;
-                var estado  = climaJson["current_observation"].weather;
-                var temp = climaJson["current_observation"].temp_c;
-                var Hum = climaJson["current_observation"].relative_humidity;
-                var Pres = climaJson["current_observation"].pressure_mb;
 
-                %>
-            
-            <h2 class="page-header">Información del Clima: <%= city %></h2>
+            <h2 class="page-header" id="CiudadClima">Información del Clima</h2>
+            <div class="wrap">
+              <div class="left_col">
+                <h4 class="page-header">Temperatura</h2>
 
-            <div class="col-md-3">
-              <h4><%=estado%></h4>
-              <img src="<%=img%>" alt="Clima" height="80" width="80">
+                <div  id="tempGraph"></div>
+                
+                <script type="text/javascript">
+                  g = new Dygraph(
+
+                    // containing div
+                    document.getElementById("tempGraph"),
+
+                    // CSV or path to a CSV file.
+                    "<%=dataTemp%>"
+                  );
+                </script>
+
+                <h4 class="page-header">Humedad</h2>
+
+                <div  id="humGraph"></div>
+                
+                <script type="text/javascript">
+                  g = new Dygraph(
+
+                    // containing div
+                    document.getElementById("humGraph"),
+
+                    // CSV or path to a CSV file.
+                    "<%=dataHum%>"
+                  );
+                </script>
+              </div>
+              <div class="right_col">
+                <h4 class="page-header">Velocidad del Viento</h2>
+
+                <div  id="vieGraph"></div>
+                
+                <script type="text/javascript">
+                  g = new Dygraph(
+
+                    // containing div
+                    document.getElementById("vieGraph"),
+
+                    // CSV or path to a CSV file.
+                    "<%=dataWind%>"
+                  );
+                </script>
+
+                <h4 class="page-header">Precipitación</h2>
+
+                <div  id="precGraph"></div>
+                
+                <script type="text/javascript">
+                  g = new Dygraph(
+
+                    // containing div
+                    document.getElementById("precGraph"),
+
+                    // CSV or path to a CSV file.
+                    "<%=dataPrecip%>"
+                  );
+                </script>
+              </div>
             </div>
-            <div class="col-md-3">
-              <h4>Temperatura</h4>
-              <h1><%=temp%> C<h1>
 
-            </div>
-            <div class="col-md-3">
-              <h4>Humedad</h4>
-              <h1><%=Hum%><h1>
-            </div>            
-            <div class="col-md-3">
-              <h4>Presion</h4>
-              <h1><%=Pres%> hPas<h1>
-            </div>
-            
-
-
-
-          </div>
 
 
         </div>
@@ -197,6 +264,36 @@
   var gZone1 = 0;
   var gZone2 = 0;
   var gZone3 = 0;
+
+  var dataTemp = "<%=dataTemp%>";
+  var dataHum = "<%=dataHum%>";
+  var dataWind = "<%=dataWind%>";
+  var dataPrecip = "<%=dataPrecip%>";
+
+  var dataTempPanguilemo = "<%=dataTemp1%>";
+  var dataHumPanguilemo = "<%=dataHum1%>";
+  var dataWindPanguilemo = "<%=dataWind1%>";
+  var dataPrecipPanguilemo = "<%=dataPrecip1%>";
+
+  var dataTempChillan = "<%=dataTemp2%>";
+  var dataHumChillan = "<%=dataHum2%>";
+  var dataWindChillan = "<%=dataWind2%>";
+  var dataPrecipChillan = "<%=dataPrecip2%>";
+
+  var dataTempTermas = "<%=dataTemp3%>";
+  var dataHumTermas = "<%=dataHum3%>";
+  var dataWindTermas = "<%=dataWind3%>";
+  var dataPrecipTermas = "<%=dataPrecip3%>";
+
+  var dataTempLonquimay = "<%=dataTemp4%>";
+  var dataHumLonquimay = "<%=dataHum4%>";
+  var dataWindLonquimay = "<%=dataWind4%>";
+  var dataPrecipLonquimay = "<%=dataPrecip4%>";
+
+  var dataTempAraucania = "<%=dataTemp5%>";
+  var dataHumAraucania = "<%=dataHum5%>";
+  var dataWindAraucania = "<%=dataWind5%>";
+  var dataPrecipAraucania = "<%=dataPrecip5%>";
 	
 
 	<% for(var i=0; i<puntos.length; i++) {%>
@@ -206,7 +303,7 @@
        }
           %>
 		markers1.push(['<%=i%>', 'Punto de Incendio No.<%=i%>', <%=puntos[i].latitude %>, <%=puntos[i].longitude %>, ['<%=zona%>','<%=puntos[i].confidence %>','region1']]);
-		moreInfo.push(['<%=puntos[i].confidence %>','<%=puntos[i].acq_date %>','<%=puntos[i].acq_time %>','<%=puntos[i].cercano %>']);
+		moreInfo.push(['<%=puntos[i].confidence %>','<%=puntos[i].acq_date %>','<%=puntos[i].acq_time %>','<%=puntos[i].cercano %>', '<%=puntos[i].estacion %>','<%=puntos[i].empresa %>']);
 	<%}%>
 
 
@@ -317,7 +414,9 @@
   		        map: map,
               icon: iconFire,
               confidence: detail[i][0],
-              zone: zoneFire
+              zone: zoneFire,
+              estacion: detail[i][4],
+              empresa: detail[i][5]
   		    });
 
   		    map.markers.push(marker1);
@@ -334,9 +433,76 @@
   		            infowindow.open(map, marker1);
   		            map.panTo(this.getPosition());
   		            map.setZoom(15);
+                  actualizarGraficas(marker1.estacion);
+                  console.log(marker1);
   		        }
   		    })(marker1, content));
   		}
+
+      function actualizarGraficas(estacion) {
+        var auxTemp;
+        var auxHum;
+        var auxVie;
+        var auxPre;
+
+        
+        if (estacion == 1){
+          auxTemp = dataTempPanguilemo;
+          auxHum = dataHumPanguilemo;
+          auxVie = dataWindPanguilemo;
+          auxPre = dataPrecipPanguilemo;
+          $("#CiudadClima").text("Información del Clima Panguilemo");
+        } 
+        if (estacion == 2){
+          auxTemp = dataTempChillan;
+          auxHum = dataHumChillan;
+          auxVie = dataWindChillan;
+          auxPre = dataPrecipChillan;
+          $("#CiudadClima").text("Información del Clima Chillan Quinchamali");
+        } 
+        if (estacion == 3){
+          auxTemp = dataTempTermas;
+          auxHum = dataHumTermas;
+          auxVie = dataWindTermas;
+          auxPre = dataPrecipTermas;
+          $("#CiudadClima").text("Información del Clima Termas de Chillan");
+        } 
+        if (estacion == 4){
+          auxTemp = dataTempLonquimay;
+          auxHum = dataHumLonquimay;
+          auxVie = dataWindLonquimay;
+          auxPre = dataPrecipLonquimay;
+          $("#CiudadClima").text("Información del Clima Lonquimay");
+        } 
+        if (estacion == 5){
+          auxTemp = dataTempAraucania;
+          auxHum = dataHumAraucania;
+          auxVie = dataWindAraucania;
+          auxPre = dataPrecipAraucania;
+          $("#CiudadClima").text("Información del Clima La Araucania");
+        } 
+        if (estacion == 0) {
+          auxTemp = dataTemp;
+          auxHum = dataHum;
+          auxVie = dataWind;
+          auxPre = dataPrecip;
+          $("#CiudadClima").text("Información del Clima");
+        }
+
+        g = new Dygraph(document.getElementById("tempGraph"),auxTemp);
+        g = new Dygraph(document.getElementById("humGraph"),auxHum);
+        g = new Dygraph(document.getElementById("vieGraph"),auxVie);
+        g = new Dygraph(document.getElementById("precGraph"),auxPre);
+      }
+
+
+
+      $('#empresaElectrica li a').on('click', function(){
+          var text = $(this).text();
+          var id = $(this).attr('id');
+          $("#empresaElectricaTxt").text("Empresa: "+ text);
+          filtroEmpresa(id);
+      });
 
 
       /*$("#confidency1").click(function() {
@@ -479,13 +645,11 @@
       }
 
       function zoneFilter(zone) {
-        var Riskzone1 = 0;
+         var Riskzone1 = 0;
         var Riskzone2 = 0;
         var Riskzone3 = 0;
-
         markerCluster.clearMarkers();
         var Filtermarkers =[];
-
         $.each(map.markers, function(i, marker) {
               if (zone == 0){
                 marker.setVisible(true);
@@ -497,6 +661,57 @@
               }
               else{
                 if(marker.zone == zone){
+                  marker.setVisible(true);
+                  if (marker.zone == 1)
+                  {
+                    Riskzone1++;
+                  } 
+                  if (marker.zone == 2)
+                  {
+                    Riskzone2++;
+                  } 
+                  if (marker.zone == 3)
+                  {
+                    Riskzone3++;
+                    Filtermarkers.push(marker);
+                  } 
+                }
+                else{
+                    marker.setVisible(false);
+                }
+                  
+              }
+              
+          });
+        document.getElementById("Zona1").innerHTML = Riskzone1;
+        document.getElementById("Zona2").innerHTML = Riskzone2;
+        document.getElementById("Zona3").innerHTML = Riskzone3;
+        markerCluster = new MarkerClusterer(map, Filtermarkers,
+            {imagePath: 'assets/image/m'});
+      }
+
+      function filtroEmpresa(empresa) {
+        var Riskzone1 = 0;
+        var Riskzone2 = 0;
+        var Riskzone3 = 0;
+
+        markerCluster.clearMarkers();
+        var Filtermarkers =[];
+
+        $.each(map.markers, function(i, marker) {
+              if (empresa == -1){
+                marker.setVisible(true);
+                Riskzone2 = gZone2;
+                Riskzone3 = gZone3;
+                if (marker.zone == 3) {
+                  Filtermarkers.push(marker);
+                }
+              }
+              else{
+
+                auxEmpresa = marker.empresa.split(',');
+
+                if(auxEmpresa[empresa] == "true"){
                   marker.setVisible(true);
                   if (marker.zone == 1)
                   {
