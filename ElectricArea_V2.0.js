@@ -148,6 +148,8 @@ var val = Zona[0]||Zona[1]||Zona[2]||Zona[3]||Zona[4]||Zona[5]||Zona[6]||Zona[7]
 //}
 
 
+
+
 //NOTE: Se retorna una arreglo de 5 elementos con valores booleanos todos. Si el elemento del arreglo es True quiere decir que el punto de incendio se encuentra en la zona de esa distribuidora.
 // Los elemento del arreglo corresponden a las siguientes zonas:
 

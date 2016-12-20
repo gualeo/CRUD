@@ -27,6 +27,9 @@ app.use(express.static(__dirname + '/'));
 
 
 var db
+var dataEmpresa
+var idEmpresa
+var userGroup
 
 const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
@@ -51,8 +54,34 @@ app.use(stormpath.init(app, {
     forgotPassword:{
       enabled: false
     }
+  },
+  preLoginHandler: function (formData, req, res, next) {
+  	dataEmpresa = formData.idEmpresa
+    console.log('prueba de data', formData);
+    next();
+  },
+  postLoginHandler: function (account, req, res, next) {
+    
+    userGroup = account.customData.idEmpresa;
+    idEmpresa = dataEmpresa;
+
+    console.log(userGroup);
+    console.log(idEmpresa);
+
+    if ((userGroup !== 999)&&(userGroup !== idEmpresa)) {
+      return next(new Error('Esta cuenta no tiene permisos para ver la empresa seleccionada.'));
+    }
+    else{
+    	next();
+    }
+
+
+
+    
   }
 }));
+
+
  
 
  
@@ -257,24 +286,24 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 				Concepcion Anteayer];
 
 	*/
-    var urls = ["http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.1.85682.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.1.85682.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.1.85682.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.248.85629.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.248.85629.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.248.85629.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.1.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.1.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.1.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.28.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.28.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.28.85672.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.79.85743.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.79.85743.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.79.85743.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+todayString+"/q/zmw:00000.1.85743.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+yesterdayString+"/q/zmw:00000.1.85743.json",
-				  "http://api.wunderground.com/api/ac6084d23fcb0ad4/history_"+anteayerString+"/q/zmw:00000.1.85743.json"];
+    var urls = ["http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.1.85682.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.1.85682.json",
+				  /*"http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.1.85682.json",*/
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.248.85629.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.248.85629.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.248.85629.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.1.85672.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.1.85672.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.1.85672.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.28.85672.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.28.85672.json"/*,
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.28.85672.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.79.85743.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.79.85743.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.79.85743.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+todayString+"/q/zmw:00000.1.85743.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+yesterdayString+"/q/zmw:00000.1.85743.json",
+				  "http://api.wunderground.com/api/1fe73294775d5567/history_"+anteayerString+"/q/zmw:00000.1.85743.json"*/];
 
 	console.log(urls);
 
@@ -314,7 +343,8 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 
 	    console.log("Respuesta con " + responses.length);
 			    
-		for (i = 0; i < 3; i++) { 
+		//for (i = 0; i < 3; i++) {
+		for (i = 0; i < 2; i++) { 
 			auxResponse = responses[i].history.observations;
 			for (j = 0; j < auxResponse.length; j++) { 
 
@@ -331,7 +361,8 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 			console.log("Termine Conce");
 		}
 
-		for (i = 3; i < 6; i++) { 
+		//for (i = 3; i < 6; i++) {
+		for (i = 2; i < 5; i++) { 
 			auxResponse = responses[i].history.observations;
 			for (j = 0; j < auxResponse.length; j++) { 
 
@@ -348,7 +379,8 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 			console.log("Termine Panguilemo");
 		}
 
-		for (i = 6; i < 9; i++) { 
+		//for (i = 6; i < 9; i++) {
+		for (i = 5; i < 7; i++) { 
 			auxResponse = responses[i].history.observations;
 			for (j = 0; j < auxResponse.length; j++) { 
 
@@ -365,7 +397,8 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 			console.log("Chillan Quinchamali");
 		}
 
-		for (i = 9; i < 12; i++) { 
+		//for (i = 9; i < 12; i++) { 
+		for (i = 7; i < 9; i++) { 
 			auxResponse = responses[i].history.observations;
 			for (j = 0; j < auxResponse.length; j++) { 
 
@@ -382,7 +415,7 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 			console.log("Termas");
 		}
 
-		for (i = 12; i < 15; i++) { 
+		/*for (i = 12; i < 15; i++) { 
 			auxResponse = responses[i].history.observations;
 			for (j = 0; j < auxResponse.length; j++) { 
 
@@ -419,11 +452,11 @@ app.get('/mapa', stormpath.loginRequired, (req, res) => {
 			console.log("Araucania");
 			console.log(auxResponse);
 
-		}
+		}*/
 
 		
 
-	    res.render('index.ejs', {puntos: result, usuario:req.user, 
+	    res.render('index.ejs', {puntos: result, usuario:req.user, idEmpresa:idEmpresa, userGroup:userGroup,
 	    							dataTemp: textTemp, dataHum: textHum, dataWind: textWind, dataPrecip: textPrec, 
 	    							dataTemp1: textTemp1, dataHum1: textHum1, dataWind1: textWind1, dataPrecip1: textPrec, 
 	    							dataTemp2: textTemp2, dataHum2: textHum2, dataWind2: textWind2, dataPrecip2: textPrec2,

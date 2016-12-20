@@ -60,7 +60,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Usuario: <%=usuario.email%></a></li>
-            <li><form action="/logout" method="POST"><button type="submit" class="btn btn-default">Salir</button></form></li>
+            <li><form action="/logout" method="POST"><button type="submit" class="btn btn-link">Salir</button></form></li>
           </ul>
         </div>
       </div>
@@ -111,22 +111,22 @@
                 <h5 id="ZonaElectrica">Mostrar Lineas Electricas</h5>
                 <div class="dropdown">
                   <button class="btn btn-default dropdown-toggle" type="button" id="dwElectriczone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Lineas ELectricas
+                    Lineas Electricas
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="ElectricZone">
-                    <li><a href="#" id="zone1">Si</a></li>
-                    <li><a href="#" id="zone2">No</a></li>
+                    <li><a href="#" id="1">Si</a></li>
+                    <li><a href="#" id="0">No</a></li>
                   </ul>
                 </div>
 
             </li>
+            <% if(userGroup == 999) {%>
             <li>
-
               <h5 id="empresaElectricaTxt">Empresa</h5>
                 <div class="dropdown">
                   <button class="btn btn-default dropdown-toggle" type="button" id="dwzone" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Estacion
+                    Empresa
                     <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" id="empresaElectrica">
@@ -135,11 +135,11 @@
                     <li><a href="#" id="2">Frontel</a></li>
                     <li><a href="#" id="3">SAESA</a></li>
                     <li><a href="#" id="4">Transelec</a></li>
-                    <li><a href="#" id="-1">Todas</a></li>
+                    <li><a href="#" id="999">Todas</a></li>
                   </ul>
                 </div>
-
             </li>
+            <%}%>
         </div>
 
         <div class="col-md-offset-2 main">
@@ -147,29 +147,34 @@
 
            <div class="row placeholders">
 
-             <div class="col-md-9">
+             <div class="col-md-11">
                 <div id="map" style="width:95%;height:400px"></div>
              </div> 
-             <div class="col-md-3">
+             <div class="col-md-1">
                 <div class="row placeholders">
                     <div class="placeholder">
                       <div id="Zona1" class="numberCircleRed ">0</div>
                       <h4 style="text-align: center;">Zona 1</h4>
-                      <span class="text-muted" >Incendios cercanos de una linea electrica sin mantenimiento</span>
+                      <br>
                     </div>        
                 </div>
                 <div class="row placeholders">
                     <div class="placeholder">
                       <div id="Zona2" class="numberCircleOrange ">0</div>
                       <h4>Zona 2</h4>
-                      <span class="text-muted">Incendios cercanos de una linea electrica</span> 
+                      <br>
                     </div> 
                 </div>
                 <div class="row placeholders">
                     <div class="placeholder">
                       <div id="Zona3" class="numberCircleYellow ">0</div>
                       <h4>Zona 3</h4>
-                      <span class="text-muted">Incendios dentro del area monitoreada</span>
+                      <br>
+                    </div> 
+                </div>
+                <div class="row placeholders">
+                    <div class="placeholder">
+                      <button type="submit" class="btn btn-primary" id="btnReiniciar">Reiniciar Mapa</button>
                     </div> 
                 </div>
              </div> 
@@ -264,6 +269,7 @@
   var gZone1 = 0;
   var gZone2 = 0;
   var gZone3 = 0;
+  var ctaLayer;
 
   var dataTemp = "<%=dataTemp%>";
   var dataHum = "<%=dataHum%>";
@@ -310,7 +316,9 @@
       function initMap() {
 
       	var infowindow = new google.maps.InfoWindow({
-		      content: ''
+		      content: '',
+          maxWidth: 320,
+          maxHeight: 100
 		    });
 
         map = new google.maps.Map(document.getElementById('map'), {
@@ -378,6 +386,9 @@
 
         var markerCluster = new MarkerClusterer(map, markersZona2,
             {imagePath: 'assets/image/m'});
+
+
+        filtroEmpresa(<%=idEmpresa%>);
 
 
 
@@ -577,6 +588,27 @@
           zoneFilter(0);
       });*/
 
+      $('#ElectricZone li a').on('click', function(){
+          var text = $(this).text();
+          var id = $(this).attr('id');
+          //url: 'https://www.dropbox.com/s/uouq3gh1uv435ov/Electric%20Zone.kml?dl=1'
+          if (id == 1)
+          { 
+            ctaLayer = new google.maps.KmlLayer({
+              url: 'https://www.dropbox.com/s/byb5bxjddrv5l75/Frontel.kml?dl=1',
+              map: map
+            });
+
+          }
+          else{
+            ctaLayer.setMap(null);
+          }
+          
+
+      });
+
+      
+
       $("#kml1").click(function() {
           setFile("assets/kml/file.kml");
       });
@@ -587,6 +619,14 @@
       $("#kml3").click(function() {
           setMapOnAll(null);
       });
+
+
+      $("#btnReiniciar").click(function() {
+          infowindow.close();
+          map.setCenter({lat: -37.796, lng: -72.477});
+          map.setZoom(6);
+      });
+      
 
 
 
@@ -699,7 +739,7 @@
         var Filtermarkers =[];
 
         $.each(map.markers, function(i, marker) {
-              if (empresa == -1){
+              if (empresa == 999){
                 marker.setVisible(true);
                 Riskzone2 = gZone2;
                 Riskzone3 = gZone3;
@@ -777,6 +817,8 @@
               });
           }
       }
+
+
 
 
 
